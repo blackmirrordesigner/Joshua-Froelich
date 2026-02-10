@@ -1,201 +1,51 @@
-# Joshua Froelich - Official Merch & Music Website
+# Cyrus Reigns Records — Website
 
-A professional e-commerce website for Christian Rock musician Joshua Froelich, featuring merchandise sales, music releases, and an admin panel for order management.
+Static website for Cyrus Reigns Records. Christian Rock aesthetic: dark theme, gold accents, first EP (Ezekiel 34, Isaiah 2, Jeremiah 23) with sermon text and Shakespearean rhymed versions.
 
-![Christian Rock Music](html/assets/images/hero-image.jpg)
+## Structure
 
-## 🎸 Features
+- **Root:** `index.html` (home), `about.html`, `music.html`, `merch.html`, `contact.html`
+- **Track pages:** `ezekiel-34.html`, `isaiah-2.html`, `jeremiah-23.html`
+- **Assets:** `assets/css/styles.css`, `assets/js/main.js`, `assets/audio/`, `assets/images/`
 
-### Customer-Facing
-- **Merchandise Store**: T-shirts with size selection (S-4XL), CDs, and digital downloads
-- **Shopping Cart**: Persistent cart with localStorage, floating cart button, and drawer UI
-- **Checkout System**: Integrated checkout with shipping options and order confirmation
-- **Music Releases**: EP showcase and track listings
-- **Tour Dates**: Concert schedule with ticket purchasing
-- **Responsive Design**: Mobile-friendly interface with Bootstrap 5
+## Audio (MP3s)
 
-### Admin Panel
-- **Order Management**: View, filter, and search all orders
-- **Order Details**: Update order status, add tracking numbers, and internal notes
-- **Shipping Integration**: Support for USPS, FedEx, UPS, and DHL
-- **Invoice Generation**: Print professional invoices
-- **Data Export**: Export orders to CSV
-- **Backup & Restore**: Full order data backup/restoration
-- **Tax Settings**: Configure tax rates by country
-- **Secure Access**: SHA-256 password authentication
+Place your track files in `assets/audio/` with these names:
 
-## 🚀 Quick Start
+- `ezekiel-34.mp3`
+- `isaiah-2.mp3`
+- `jeremiah-23.mp3`
 
-### Local Development
+If the files are missing, the HTML5 audio player will show but playback will fail until you add them.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/joshua-froelich.git
-   cd joshua-froelich
-   ```
+## Deploy (Netlify)
 
-2. **Open in browser**
-   ```bash
-   cd html
-   open index.html
-   # Or use a local server (recommended):
-   python3 -m http.server 8000
-   # Then visit: http://localhost:8000
-   ```
+1. Push this folder to a GitHub repository.
+2. Sign up at [Netlify](https://www.netlify.com) and connect the repo.
+3. Build settings:
+   - **Build command:** leave empty
+   - **Publish directory:** `.` (root) or the directory that contains `index.html`
+4. Deploy. Your site will be live at `*.netlify.app`.
+5. Optional: add a custom domain (e.g. cyrusreignsrecords.com) in Netlify → Domain settings.
 
-3. **Access Admin Panel**
-   - Navigate to `admin.html`
-   - Password: `CyrusReigns2024!Secure#Admin`
-   - ⚠️ **Change this password before deploying to production!**
+## Optional
 
-## 📁 Project Structure
+- **Contact form:** Replace the form `action` in `contact.html` with your Formspree or Google Form URL.
+- **Merch:** Update "Buy Now" links in `merch.html` to your store or a Google Form.
+- **Images:** Add `joshua-bio.jpg`, `simion-bio.jpg` in `assets/images/` for the About page; add merch images in `assets/images/merch/` (or rely on placeholders).
 
-```
-joshua-froelich/
-├── html/                        # Website root
-│   ├── index.html              # Homepage
-│   ├── about.html              # About page
-│   ├── music.html              # Music releases
-│   ├── merch.html              # Merchandise store
-│   ├── contact.html            # Contact form
-│   ├── checkout.html           # Checkout page
-│   ├── admin.html              # Admin panel (password protected)
-│   ├── assets/
-│   │   ├── css/
-│   │   │   ├── main.css        # Custom styles
-│   │   │   └── cart.css        # Cart & checkout styles
-│   │   ├── js/
-│   │   │   ├── main.js         # Core functionality
-│   │   │   ├── cart.js         # Shopping cart
-│   │   │   ├── checkout.js     # Checkout logic
-│   │   │   ├── admin.js        # Admin panel
-│   │   │   ├── tour.js         # Tour dates
-│   │   │   ├── slider.js       # Image sliders
-│   │   │   └── track.js        # Music player
-│   │   ├── images/             # Images and graphics
-│   │   └── fonts/              # Custom fonts
-│   └── vendor/                 # Third-party libraries (Bootstrap, etc.)
-├── Original Recordings/        # Source audio files
-└── README.md                   # This file
-```
+## Cover art (releases)
 
-## 🛒 Cart & Checkout System
+Place EP and track art in `assets/images/releases/`:
 
-### localStorage Keys
-- `cr_cart` - Shopping cart items
-- `cr_orders` - Order history
-- `cr_admin_session` - Admin authentication
-- `cr_tax_settings` - Tax configuration
+- **EP:** `first-ep-cover.jpg` or `first-ep-cover.svg` — used in the Latest Release slider and Music page. Recommended: 800×800 or 1200×1200 px.
+- **Tracks:** `ezekiel-34.jpg`, `isaiah-2.jpg`, `jeremiah-23.jpg` (or `.svg`) — one image per track for the slider and Music cards. Same dimensions as above.
 
-### Cart Item Structure
-```javascript
-{
-  id: "tee",
-  name: "Reigning Over Darkness — Tee",
-  price: 24.00,
-  quantity: 1,
-  size: "L"  // For apparel items
-}
-```
+SVG placeholders are included by default so the slider and Music page work without replacing files. Replace with your own art when ready.
+- **Analytics:** Add Google Analytics snippet in the `<head>` of each page if desired.
 
-## 🔐 Security Notes
+## Tech
 
-### Current Implementation
-- Admin password is hashed using SHA-256
-- Session-based authentication (sessionStorage)
-- **⚠️ Important**: This is a client-side demo implementation
-
-### Production Recommendations
-1. **Move authentication to server-side**
-2. **Remove password from source code comments**
-3. **Implement proper backend API**
-4. **Use HTTPS** (required for crypto.subtle.digest)
-5. **Add CORS protection**
-6. **Implement rate limiting**
-7. **Use environment variables for sensitive data**
-
-## 🎨 Customization
-
-### Update Product Catalog
-Edit the `PRODUCTS` object in [`cart.js`](html/assets/js/cart.js):
-```javascript
-var PRODUCTS = {
-  cd: { name: 'First EP — CD', price: 12.00, image: 'assets/images/merch/02-cd.jpg' },
-  tee: { name: 'Your Product', price: 24.00, image: 'path/to/image.jpg' }
-};
-```
-
-### Modify T-Shirt Sizes
-Update `TEE_SIZES` array in [`cart.js`](html/assets/js/cart.js):
-```javascript
-var TEE_SIZES = ['S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL'];
-```
-
-### Change Tax Rates
-Access admin panel → Settings tab → Update tax percentages
-
-## 🧪 Testing
-
-### Manual Testing Checklist
-- [ ] Add items to cart
-- [ ] Modify quantities and sizes in cart
-- [ ] Remove items from cart
-- [ ] Complete checkout process
-- [ ] Verify order appears in admin panel
-- [ ] Update order status
-- [ ] Generate invoice
-- [ ] Export orders to CSV
-- [ ] Test on mobile devices
-- [ ] Test in different browsers
-
-## 📦 Deployment
-
-### GitHub Pages (Static Hosting)
-```bash
-# Push to GitHub
-git push origin main
-
-# Enable GitHub Pages in repository settings
-# Select branch: main
-# Select folder: /html
-```
-
-### Traditional Web Hosting
-1. Upload entire `html/` folder contents to your web server
-2. Ensure `index.html` is in the root directory
-3. Configure `.htaccess` if using Apache
-4. Enable HTTPS (required for admin authentication)
-
-## 🛠️ Technologies Used
-
-- **HTML5** - Semantic markup
-- **CSS3** - Custom styling with animations
-- **JavaScript (ES5)** - Vanilla JS, no framework dependencies
-- **Bootstrap 5** - UI framework
-- **Font Awesome** - Icons
-- **localStorage** - Client-side data persistence
-- **Web Crypto API** - Password hashing
-
-## 📄 License
-
-Copyright © 2024 Joshua Froelich / Cyrus Reigns Records. All rights reserved.
-
-**Important**: This repository contains copyrighted music, artwork, and branding. Please contact for licensing inquiries.
-
-## 🤝 Contributing
-
-This is a personal artist website. For bug reports or feature suggestions, please open an issue.
-
-## 📞 Contact
-
-- **Website**: [joshuafroelich.com](#)
-- **Email**: [contact@joshuafroelich.com](#)
-- **Social Media**: [@cyrusreigns](#)
-
-## 🎵 About Cyrus Reigns
-
-Cyrus Reigns is a Christian Rock project bringing powerful music with a faith-based message. The project combines heavy rock aesthetics with spiritual themes, creating a unique sound that resonates with believers and rock fans alike.
-
----
-
-**Made with ❤️ for the glory of God**
+- HTML5, CSS3, vanilla JS
+- Bootstrap 5 (CDN), Font Awesome (CDN)
+- No build step; open `index.html` in a browser or use Live Server for local preview.
