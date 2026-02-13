@@ -4,12 +4,16 @@
  * Bot token and chat IDs are server-side only - never exposed to the client.
  */
 
+require('dotenv').config();
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const basicAuth = require('basic-auth');
 
 const PORT = process.env.PORT || 3000;
+const ADMIN_USER = process.env.ADMIN_USER;
+const ADMIN_PASS = process.env.ADMIN_PASS;
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_IDS = process.env.TELEGRAM_CHAT_IDS
   ? process.env.TELEGRAM_CHAT_IDS.split(',').map((id) => id.trim()).filter(Boolean)
@@ -40,21 +44,24 @@ function isRateLimited(ip) {
   return false;
 }
 
-function escapeMarkdown(text) {
+function escapeHtml(text) {
   if (!text || typeof text !== 'string') return '';
-  return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 async function sendTelegramMessage(data) {
   const text = [
-    '📩 *New Website Inquiry - cyrusreigns.com*',
+    '📩 <b>New Website Inquiry - cyrusreigns.com</b>',
     '',
-    '👤 *Name:* ' + escapeMarkdown(data.name),
-    '🏢 *Company:* ' + (data.company ? escapeMarkdown(data.company) : '-'),
-    '📞 *Phone:* ' + (data.phone ? escapeMarkdown(data.phone) : '-'),
-    '📧 *Email:* ' + escapeMarkdown(data.email),
-    '💬 *Message:*',
-    data.message ? escapeMarkdown(data.message) : '-'
+    '👤 <b>Name:</b> ' + escapeHtml(data.name),
+    '🏢 <b>Company:</b> ' + (data.company ? escapeHtml(data.company) : '-'),
+    '📞 <b>Phone:</b> ' + (data.phone ? escapeHtml(data.phone) : '-'),
+    '📧 <b>Email:</b> ' + escapeHtml(data.email),
+    '💬 <b>Message:</b>',
+    data.message ? escapeHtml(data.message) : '-'
   ].join('\n');
 
   const requests = CHAT_IDS.map((chatId) =>
@@ -64,13 +71,21 @@ async function sendTelegramMessage(data) {
       body: JSON.stringify({
         chat_id: chatId,
         text,
-        parse_mode: 'Markdown'
+        parse_mode: 'HTML'
       })
     }).then((r) => r.json())
   );
 
   const results = await Promise.all(requests);
-  return results.every((r) => r.ok === true);
+  const allOk = results.every((r) => r.ok === true);
+  if (!allOk) {
+    results.forEach((r, i) => {
+      if (!r.ok) {
+        console.error('[contact] Telegram error:', r.description || 'error_code=' + r.error_code);
+      }
+    });
+  }
+  return allOk;
 }
 
 function sendJson(res, status, body) {
@@ -172,6 +187,30 @@ const server = http.createServer(async (req, res) => {
       sendJson(res, 500, { ok: false });
     }
     return;
+  }
+
+  // Redirect /admin to login page (friendly entry point)
+  if (pathname === '/admin' || pathname === '/admin/') {
+    res.writeHead(302, { Location: '/admin-login.html' });
+    res.end();
+    return;
+  }
+
+  // Admin Basic Auth (protects /admin.html and /assets/js/admin.js)
+  const isAdminPath = pathname === '/admin.html' || pathname === '/assets/js/admin.js';
+  if (isAdminPath) {
+    if (!ADMIN_USER || !ADMIN_PASS) {
+      res.writeHead(503, { 'Content-Type': 'text/plain' });
+      res.end('Admin access not configured. Set ADMIN_USER and ADMIN_PASS in .env');
+      return;
+    }
+    const user = basicAuth(req);
+    if (!user || user.name !== ADMIN_USER || user.pass !== ADMIN_PASS) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Admin Area"');
+      res.writeHead(401);
+      res.end('Authentication required.');
+      return;
+    }
   }
 
   // Static file serving

@@ -34,10 +34,10 @@ A professional e-commerce website for Christian Rock musician Joshua Froelich, f
    cd joshua-froelich
    ```
 
-2. **Set up environment (for contact form)**
+2. **Set up environment**
    ```bash
    cp .env.example .env
-   # Edit .env and add your TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_IDS
+   # Edit .env: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_IDS, ADMIN_USER, ADMIN_PASS
    ```
 
 3. **Start the server**
@@ -48,8 +48,9 @@ A professional e-commerce website for Christian Rock musician Joshua Froelich, f
    ```
 
 4. **Access Admin Panel**
-   - Navigate to `admin.html`
-   - In production, protect with Nginx Basic Auth (see section below)
+   - Go to `/admin` or `/admin-login.html` (login page), then click "Open Admin"
+   - Or go directly to `/admin.html` — your browser will prompt for username/password
+   - Requires `ADMIN_USER` and `ADMIN_PASS` in `.env`
 
 ## 📬 Contact Form (Telegram Integration)
 
@@ -61,6 +62,8 @@ The contact form sends inquiries to Telegram instead of Formspree. All Telegram 
 |----------|-------------|
 | `TELEGRAM_BOT_TOKEN` | Your Telegram Bot API token from [@BotFather](https://t.me/BotFather) |
 | `TELEGRAM_CHAT_IDS` | Comma-separated list of chat IDs to receive notifications (e.g. `583092767,256521999`) |
+| `ADMIN_USER` | Username for admin Basic Auth (required for `/admin.html`) |
+| `ADMIN_PASS` | Password for admin Basic Auth |
 
 ### Setup
 
@@ -160,12 +163,25 @@ sudo mkdir -p /etc/nginx/auth
 sudo htpasswd -c /etc/nginx/auth/cyrusreigns_admin.htpasswd admin
 ```
 
-### 2. Add the location block to your Nginx site config
+### 2. Add the location blocks to your Nginx site config
 
-Add this block inside your `server { }` block for cyrusreigns.com (e.g. `/etc/nginx/sites-available/cyrusreigns`):
+Add these blocks inside your `server { }` block for cyrusreigns.com (e.g. `/etc/nginx/sites-available/cyrusreigns`):
 
 ```nginx
+# Admin login page: explicitly unprotected (friendly entry point)
+location = /admin-login.html {
+    auth_basic off;
+}
+
+# Admin panel: protected
 location = /admin.html {
+    auth_basic "CyrusReigns Admin";
+    auth_basic_user_file /etc/nginx/auth/cyrusreigns_admin.htpasswd;
+    add_header Cache-Control "no-store";
+}
+
+# Admin JS: protected (defense in depth; prevents loading admin logic without auth)
+location = /assets/js/admin.js {
     auth_basic "CyrusReigns Admin";
     auth_basic_user_file /etc/nginx/auth/cyrusreigns_admin.htpasswd;
     add_header Cache-Control "no-store";
@@ -190,6 +206,10 @@ sudo htpasswd /etc/nginx/auth/cyrusreigns_admin.htpasswd admin
 # Add another user (omit -c to avoid overwriting)
 sudo htpasswd /etc/nginx/auth/cyrusreigns_admin.htpasswd another_user
 ```
+
+### Defense in depth (frontend)
+
+The admin page hides the dashboard by default. On load, it sends a `HEAD` request to `/admin.html`. If the response is 401 (not authenticated), it shows a locked message with no sensitive data. If 200 (authenticated via Nginx Basic Auth), it shows the dashboard. No passwords or hashes in JS.
 
 ### Optional: Friendly login page
 

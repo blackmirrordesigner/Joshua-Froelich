@@ -1,6 +1,6 @@
 /**
  * Admin Panel: Secure order management system
- * Protected by Nginx Basic Auth (server-side). No client-side auth.
+ * Protected by Nginx Basic Auth (server-side). Defense in depth: verify auth before showing data.
  */
 (function () {
     'use strict';
@@ -10,6 +10,38 @@
 
     var currentOrder = null;
     var orderModal = null;
+
+    // Show locked message (no sensitive data)
+    function showLocked() {
+        var locked = document.getElementById('admin-locked');
+        var dashboard = document.getElementById('admin-dashboard');
+        if (locked) locked.classList.remove('d-none');
+        if (dashboard) dashboard.classList.add('d-none');
+    }
+
+    // Show dashboard (Basic Auth verified)
+    function showDashboard() {
+        var locked = document.getElementById('admin-locked');
+        var dashboard = document.getElementById('admin-dashboard');
+        if (locked) locked.classList.add('d-none');
+        if (dashboard) dashboard.classList.remove('d-none');
+        loadDashboard();
+    }
+
+    // Check Basic Auth: HEAD request to protected page. 200 = authenticated, 401/error = not.
+    function checkAuthThenInit(callback) {
+        fetch('/admin.html', { method: 'HEAD', cache: 'no-store' })
+            .then(function (res) {
+                if (res.ok) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            })
+            .catch(function () {
+                callback(false);
+            });
+    }
 
     // Get all orders
     function getOrders() {
@@ -476,7 +508,14 @@
             }
         });
 
-        loadDashboard();
+        // Defense in depth: only show dashboard if Basic Auth passed (200). Else show locked message.
+        checkAuthThenInit(function (authenticated) {
+            if (authenticated) {
+                showDashboard();
+            } else {
+                showLocked();
+            }
+        });
     }
 
     // Expose functions for onclick handlers
