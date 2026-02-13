@@ -1,0 +1,9 @@
+# Add this location block inside your server { } block for cyrusreigns.com
+# This protects ONLY /admin.html with Nginx Basic Auth.
+# Other pages (index.html, merch.html, etc.) remain unprotected.
+
+location = /admin.html {
+    auth_basic "CyrusReigns Admin";
+    auth_basic_user_file /etc/nginx/auth/cyrusreigns_admin.htpasswd;
+    add_header Cache-Control "no-store";
+}

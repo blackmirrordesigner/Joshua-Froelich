@@ -1,17 +1,13 @@
-# Joshua Froelich - Static Website
-# Uses nginx to serve HTML/CSS/JS assets
-FROM nginx:alpine
+# Cyrus Reigns Records - Website (Node.js serves static files + contact API)
+FROM node:20-alpine
 
-# Remove default nginx static content
-RUN rm -rf /usr/share/nginx/html/*
+WORKDIR /app
 
-# Copy project files to nginx web root
-COPY . /usr/share/nginx/html/
+COPY . .
 
-# Copy custom nginx config (optional overrides)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 3000
 
-# Expose port 80
-EXPOSE 80
+ENV PORT=3000
+ENV NODE_ENV=production
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]

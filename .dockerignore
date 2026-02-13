@@ -13,5 +13,10 @@ LICENSE
 .idea
 .DS_Store
 
-# Node (if added later)
+# Node
 node_modules
+
+# Environment (never bake secrets into image)
+.env
+.env.local
+.env.*.local

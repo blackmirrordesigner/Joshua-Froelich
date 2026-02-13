@@ -22,7 +22,7 @@ A professional e-commerce website for Christian Rock musician Joshua Froelich, f
 - **Data Export**: Export orders to CSV
 - **Backup & Restore**: Full order data backup/restoration
 - **Tax Settings**: Configure tax rates by country
-- **Secure Access**: SHA-256 password authentication
+- **Secure Access**: Nginx Basic Auth (server-side)
 
 ## 🚀 Quick Start
 
@@ -34,30 +34,78 @@ A professional e-commerce website for Christian Rock musician Joshua Froelich, f
    cd joshua-froelich
    ```
 
-2. **Open in browser**
+2. **Set up environment (for contact form)**
    ```bash
-   open index.html
-   # Or use a local server (recommended):
-   python3 -m http.server 8000
-   # Then visit: http://localhost:8000
+   cp .env.example .env
+   # Edit .env and add your TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_IDS
    ```
 
-3. **Access Admin Panel**
+3. **Start the server**
+   ```bash
+   npm start
+   # Or: node server.js
+   # Visit: http://localhost:3000
+   ```
+
+4. **Access Admin Panel**
    - Navigate to `admin.html`
-   - Password: `CyrusReigns2024!Secure#Admin`
-   - ⚠️ **Change this password before deploying to production!**
+   - In production, protect with Nginx Basic Auth (see section below)
+
+## 📬 Contact Form (Telegram Integration)
+
+The contact form sends inquiries to Telegram instead of Formspree. All Telegram requests run server-side; the bot token and chat IDs are never exposed to the client.
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `TELEGRAM_BOT_TOKEN` | Your Telegram Bot API token from [@BotFather](https://t.me/BotFather) |
+| `TELEGRAM_CHAT_IDS` | Comma-separated list of chat IDs to receive notifications (e.g. `583092767,256521999`) |
+
+### Setup
+
+1. Create a bot via [@BotFather](https://t.me/BotFather) and copy the token.
+2. Get your chat ID (e.g. by messaging [@userinfobot](https://t.me/userinfobot) or using the Telegram API).
+3. Create a `.env` file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+4. Edit `.env` and set:
+   ```
+   TELEGRAM_BOT_TOKEN=your_bot_token_here
+   TELEGRAM_CHAT_IDS=583092767,256521999
+   ```
+
+### Testing Locally
+
+1. Ensure `.env` is configured with valid credentials.
+2. Start the server: `npm start` or `node server.js`
+3. Open http://localhost:3000/contact.html
+4. Submit the form — you should receive a message in Telegram.
+5. Check the browser console for any errors if it fails.
+
+### Security
+
+- The bot token and chat IDs are stored in environment variables only.
+- The client receives only `{ ok: true }` or `{ ok: false }` — no Telegram API response is exposed.
+- Rate limit: 5 requests per 10 minutes per IP.
+- Honeypot field helps reduce spam.
 
 ## 📁 Project Structure
 
 ```
 joshua-froelich/
+├── server.js               # Node.js server (static files + /api/contact)
+├── package.json            # Node dependencies
+├── .env.example             # Environment template for Telegram
 ├── index.html              # Homepage
 ├── about.html              # About page
 ├── music.html              # Music releases
 ├── merch.html              # Merchandise store
 ├── contact.html            # Contact form
 ├── checkout.html           # Checkout page
-├── admin.html              # Admin panel (password protected)
+├── admin.html              # Admin panel (protected by Nginx Basic Auth)
+├── admin-login.html        # Optional friendly entry page (unprotected)
 ├── assets/
 │   ├── css/
 │   │   ├── main.css        # Custom styles
@@ -82,7 +130,6 @@ joshua-froelich/
 ### localStorage Keys
 - `cr_cart` - Shopping cart items
 - `cr_orders` - Order history
-- `cr_admin_session` - Admin authentication
 - `cr_tax_settings` - Tax configuration
 
 ### Cart Item Structure
@@ -96,21 +143,69 @@ joshua-froelich/
 }
 ```
 
+## 🔐 Protecting admin.html with Nginx Basic Auth
+
+The admin panel is protected by **Nginx Basic Auth** on the server. No passwords or hashes are stored in the frontend code.
+
+### 1. Create the password file (on your VPS)
+
+```bash
+# Install htpasswd tool
+sudo apt update && sudo apt install -y apache2-utils
+
+# Create auth directory
+sudo mkdir -p /etc/nginx/auth
+
+# Create password file (creates user "admin"; you will be prompted for password)
+sudo htpasswd -c /etc/nginx/auth/cyrusreigns_admin.htpasswd admin
+```
+
+### 2. Add the location block to your Nginx site config
+
+Add this block inside your `server { }` block for cyrusreigns.com (e.g. `/etc/nginx/sites-available/cyrusreigns`):
+
+```nginx
+location = /admin.html {
+    auth_basic "CyrusReigns Admin";
+    auth_basic_user_file /etc/nginx/auth/cyrusreigns_admin.htpasswd;
+    add_header Cache-Control "no-store";
+}
+```
+
+A sample config is in `nginx-admin-auth.conf.example`.
+
+### 3. Validate and reload Nginx
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### 4. Change password or add users
+
+```bash
+# Change password for existing user "admin"
+sudo htpasswd /etc/nginx/auth/cyrusreigns_admin.htpasswd admin
+
+# Add another user (omit -c to avoid overwriting)
+sudo htpasswd /etc/nginx/auth/cyrusreigns_admin.htpasswd another_user
+```
+
+### Optional: Friendly login page
+
+`admin-login.html` is an unprotected page that explains the auth flow and links to `/admin.html`. Users can visit it first; clicking "Open Admin" will trigger the browser's Basic Auth prompt. This is **not** security—it is only a user-friendly entry point.
+
 ## 🔐 Security Notes
 
-### Current Implementation
-- Admin password is hashed using SHA-256
-- Session-based authentication (sessionStorage)
-- **⚠️ Important**: This is a client-side demo implementation
+### Admin Panel
+- Protected by Nginx Basic Auth (server-side)
+- No passwords, hashes, or secrets in frontend code or git
 
 ### Production Recommendations
-1. **Move authentication to server-side**
-2. **Remove password from source code comments**
-3. **Implement proper backend API**
-4. **Use HTTPS** (required for crypto.subtle.digest)
-5. **Add CORS protection**
-6. **Implement rate limiting**
-7. **Use environment variables for sensitive data**
+1. **Use HTTPS** (required for Basic Auth over the internet)
+2. **Add CORS protection** if using APIs
+3. **Implement rate limiting** on sensitive endpoints
+4. **Use environment variables** for any backend secrets (e.g. Telegram bot token)
 
 ## 🎨 Customization
 
@@ -150,19 +245,25 @@ Access admin panel → Settings tab → Update tax percentages
 
 ### Docker (VPS / Cloud Server)
 
-1. **On your VPS**, clone the repo and build:
+1. **On your VPS**, clone the repo and create `.env`:
    ```bash
    git clone https://github.com/yourusername/joshua-froelich.git
    cd joshua-froelich
+   cp .env.example .env
+   # Edit .env with TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_IDS
+   ```
+
+2. **Build and run**:
+   ```bash
    docker compose up -d --build
    ```
-   The site will be available on port 80.
+   The site will be available on port 3001 (mapped from container port 3000).
 
-2. **With custom domain / HTTPS** (recommended for production):
+3. **With custom domain / HTTPS** (recommended for production):
    - Use a reverse proxy (nginx, Caddy, Traefik) in front of the container
    - Or add Certbot/Let's Encrypt for SSL
 
-3. **Stop the container**:
+4. **Stop the container**:
    ```bash
    docker compose down
    ```
@@ -176,6 +277,7 @@ git push origin main
 # Select branch: main
 # Select folder: / (root)
 ```
+**Note:** The contact form requires the Node.js backend (`/api/contact`). GitHub Pages serves static files only, so the contact form will not work there. Use Docker or a Node-capable host for full functionality.
 
 ### Traditional Web Hosting
 1. Upload all root files to your web server
@@ -191,7 +293,6 @@ git push origin main
 - **Bootstrap 5** - UI framework
 - **Font Awesome** - Icons
 - **localStorage** - Client-side data persistence
-- **Web Crypto API** - Password hashing
 
 ## 📄 License
 

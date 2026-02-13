@@ -1,65 +1,15 @@
 /**
  * Admin Panel: Secure order management system
- * Password: CyrusReigns2024!Secure#Admin
+ * Protected by Nginx Basic Auth (server-side). No client-side auth.
  */
 (function () {
     'use strict';
 
-    // Strong password hash (SHA-256 of "CyrusReigns2024!Secure#Admin")
-    var PASSWORD_HASH = 'b4b53e65e441727d4a930c2b5891c437b75dedf77e136af050481d1a49ce53a5';
-    var SESSION_KEY = 'cr_admin_session';
     var ORDERS_KEY = 'cr_orders';
     var TAX_SETTINGS_KEY = 'cr_tax_settings';
 
     var currentOrder = null;
     var orderModal = null;
-
-    // Simple SHA-256 implementation (for demo purposes)
-    async function hashPassword(password) {
-        var encoder = new TextEncoder();
-        var data = encoder.encode(password);
-        var hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        var hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
-    }
-
-    // Check if user is authenticated
-    function isAuthenticated() {
-        try {
-            var session = sessionStorage.getItem(SESSION_KEY);
-            return session === 'authenticated';
-        } catch (e) {
-            return false;
-        }
-    }
-
-    // Authenticate user
-    async function authenticate(password) {
-        var hash = await hashPassword(password);
-        if (hash === PASSWORD_HASH) {
-            sessionStorage.setItem(SESSION_KEY, 'authenticated');
-            return true;
-        }
-        return false;
-    }
-
-    // Logout
-    function logout() {
-        sessionStorage.removeItem(SESSION_KEY);
-        showLogin();
-    }
-
-    // Show/hide panels
-    function showLogin() {
-        document.getElementById('admin-login').classList.remove('d-none');
-        document.getElementById('admin-dashboard').classList.add('d-none');
-    }
-
-    function showDashboard() {
-        document.getElementById('admin-login').classList.add('d-none');
-        document.getElementById('admin-dashboard').classList.remove('d-none');
-        loadDashboard();
-    }
 
     // Get all orders
     function getOrders() {
@@ -489,24 +439,6 @@
     function init() {
         orderModal = new bootstrap.Modal(document.getElementById('order-modal'));
 
-        // Login form
-        document.getElementById('login-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            var password = document.getElementById('admin-password').value;
-            var errorEl = document.getElementById('login-error');
-
-            if (await authenticate(password)) {
-                errorEl.classList.add('d-none');
-                showDashboard();
-            } else {
-                errorEl.textContent = 'Invalid password';
-                errorEl.classList.remove('d-none');
-            }
-        });
-
-        // Logout button
-        document.getElementById('logout-btn').addEventListener('click', logout);
-
         // Navigation
         document.querySelectorAll('.admin-nav-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -544,12 +476,7 @@
             }
         });
 
-        // Check authentication
-        if (isAuthenticated()) {
-            showDashboard();
-        } else {
-            showLogin();
-        }
+        loadDashboard();
     }
 
     // Expose functions for onclick handlers
