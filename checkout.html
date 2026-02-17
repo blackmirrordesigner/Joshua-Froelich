@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout | Cyrus Reigns Records</title>
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
-    <meta name="description" content="Checkout — Cyrus Reigns Records merch. We accept payment and donations exclusively in AtomOne (ATONE).">
+    <meta name="description" content="Checkout — Cyrus Reigns Records merch. Pay with Venmo, Bank Account, or Atom one.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Manrope:wght@500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
         <div class="container pb-5">
             <div class="cr-page-heading-wrap mb-4 text-center">
                 <h1 class="cr-section-title mb-2">Checkout</h1>
-                <p class="lead text-muted mb-0">Delivery, shipping, and AtomOne-only payment.</p>
+                <p class="lead text-muted mb-0">Delivery, shipping, and flexible payment options.</p>
             </div>
 
             <div class="row g-4">
@@ -140,107 +140,114 @@
                         <!-- Step 3: Payment -->
                         <section class="card cr-border-gold mb-4" id="step-payment">
                             <div class="card-body">
-                                <h2 class="h5 mb-3">AtomOne payment & donations</h2>
-                                <div class="cr-atomone-emphasis border rounded p-3 mb-3">
-                                    <p class="cr-atomone-emphasis__title mb-1">ATOMONE ONLY</p>
-                                    <p class="small mb-1"><strong>We accept payments and donations exclusively in AtomOne (ATONE).</strong></p>
-                                    <p class="small mb-0">For our community, AtomOne is the most Christian payment method: a values-first fork created by Jae Kwon as a separate path from Cosmos after deep principled disagreements.</p>
+                                <h2 class="h5 mb-3">Payment method</h2>
+                                <p class="small text-muted mb-3">Choose your preferred method. Venmo is selected by default.</p>
+                                <div class="cr-input-modern cr-input-modern--select mb-3">
+                                    <label for="payment-method" class="cr-input-modern__label">Payment method <span class="text-danger">*</span></label>
+                                    <select class="cr-input-modern__input cr-input-modern__select" id="payment-method" name="payment-method" required>
+                                        <option value="venmo" selected>Venmo</option>
+                                        <option value="bank_account">Bank Account</option>
+                                        <option value="atom_one">Atom one</option>
+                                    </select>
                                 </div>
-                                <div class="cr-atomone-wallet-card border rounded p-3 mb-3">
-                                    <p class="small text-uppercase fw-semibold mb-2">AtomOne wallet for payments and donations</p>
-                                    <code id="atomone-wallet-address" class="cr-atomone-wallet-address">atone1r5dv24amcyvdxfcjjrw7m5ts324cavyu0fszgq</code>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-3" id="copy-atomone-wallet">
-                                        <i class="fas fa-copy me-1" aria-hidden="true"></i>Copy wallet
-                                    </button>
-                                    <p id="atomone-copy-feedback" class="small text-muted mt-2 mb-0" aria-live="polite"></p>
-                                </div>
-                                <div class="cr-atomone-guide border rounded p-3 mb-3">
-                                    <h3 class="h6 mb-2">How to start with AtomOne quickly</h3>
-                                    <div class="cr-atomone-wallet-links mb-3" aria-label="Recommended AtomOne wallet extensions">
-                                        <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-link-chip">
-                                            <i class="fas fa-wallet" aria-hidden="true"></i> Keplr extension
-                                        </a>
-                                        <a href="https://www.leapwallet.io/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-link-chip">
-                                            <i class="fas fa-feather-pointed" aria-hidden="true"></i> Leap extension
-                                        </a>
+
+                                <div id="payment-panel-venmo">
+                                    <div class="border rounded p-3 mb-3">
+                                        <p class="small text-uppercase fw-semibold mb-1">Venmo payment</p>
+                                        <p class="small mb-2">Use Venmo to complete your payment. Add your order name in the payment note so we can match it quickly.</p>
+                                        <p class="small mb-0">
+                                            Send payment to our business account:
+                                            <a href="https://www.venmo.com/u/cyrusreigns" target="_blank" rel="noopener noreferrer">@cyrusreigns</a>
+                                        </p>
                                     </div>
-                                    <div class="cr-atomone-steps-grid mb-2">
-                                        <article class="cr-atomone-step-card">
-                                            <div class="cr-atomone-step-icon" aria-hidden="true"><i class="fas fa-download"></i></div>
-                                            <div>
-                                                <p class="cr-atomone-step-title mb-1"><span>Step 1</span> Install a wallet</p>
-                                                <p class="small mb-1">Install <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-inline-link">Keplr</a> or <a href="https://www.leapwallet.io/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-inline-link">Leap</a> (browser extension or mobile).</p>
-                                                <div class="cr-atomone-wallet-links mb-1">
-                                                    <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-link-chip">
-                                                        <i class="fas fa-mobile-screen-button" aria-hidden="true"></i> Keplr mobile (iOS/Android)
-                                                    </a>
-                                                    <a href="https://www.leapwallet.io/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-link-chip">
-                                                        <i class="fas fa-mobile-screen-button" aria-hidden="true"></i> Leap mobile (iOS/Android)
-                                                    </a>
-                                                </div>
-                                                <p class="small text-muted mb-0"><i class="fas fa-mobile-screen-button me-1" aria-hidden="true"></i>On mobile, open either link and choose App Store or Google Play.</p>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12">
+                                            <div class="cr-input-modern">
+                                                <label for="venmo-handle" class="cr-input-modern__label">Your Venmo username <span class="text-danger">*</span></label>
+                                                <input type="text" class="cr-input-modern__input" id="venmo-handle" name="venmo-handle" placeholder="@yourhandle">
                                             </div>
-                                        </article>
-                                        <article class="cr-atomone-step-card">
-                                            <div class="cr-atomone-step-icon" aria-hidden="true"><i class="fas fa-key"></i></div>
-                                            <div>
-                                                <p class="cr-atomone-step-title mb-1"><span>Step 2</span> Create wallet safely</p>
-                                                <p class="small mb-0">Create a new wallet and save your seed phrase offline in a safe place.</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="cr-input-modern">
+                                                <label for="venmo-reference" class="cr-input-modern__label">Venmo payment note or reference <span class="text-muted">(optional)</span></label>
+                                                <input type="text" class="cr-input-modern__input" id="venmo-reference" name="venmo-reference" placeholder="e.g. CRR order payment">
                                             </div>
-                                        </article>
-                                        <article class="cr-atomone-step-card">
-                                            <div class="cr-atomone-step-icon" aria-hidden="true"><i class="fas fa-link"></i></div>
-                                            <div>
-                                                <p class="cr-atomone-step-title mb-1"><span>Step 3</span> Add AtomOne network</p>
-                                                <p class="small mb-0">Add the AtomOne network (if needed) and copy your <code>atone1...</code> address.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="payment-panel-bank-account" class="d-none">
+                                    <div class="border rounded p-3 mb-3">
+                                        <p class="small text-uppercase fw-semibold mb-1">Bank Account transfer</p>
+                                        <p class="small mb-0">Send by bank transfer, then enter the account holder and transfer reference below for verification.</p>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12">
+                                            <div class="cr-input-modern">
+                                                <label for="bank-account-holder" class="cr-input-modern__label">Account holder name <span class="text-danger">*</span></label>
+                                                <input type="text" class="cr-input-modern__input" id="bank-account-holder" name="bank-account-holder" placeholder="Full name on bank account">
                                             </div>
-                                        </article>
-                                        <article class="cr-atomone-step-card">
-                                            <div class="cr-atomone-step-icon" aria-hidden="true"><i class="fas fa-coins"></i></div>
-                                            <div>
-                                                <p class="cr-atomone-step-title mb-1"><span>Step 4</span> Buy ATONE</p>
-                                                <p class="small mb-0">Buy AtomOne on a platform that lists ATONE, or swap from another Cosmos asset.</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="cr-input-modern">
+                                                <label for="bank-transfer-reference" class="cr-input-modern__label">Transfer reference <span class="text-danger">*</span></label>
+                                                <input type="text" class="cr-input-modern__input" id="bank-transfer-reference" name="bank-transfer-reference" placeholder="Bank transfer ID or confirmation code">
                                             </div>
-                                        </article>
-                                        <article class="cr-atomone-step-card">
-                                            <div class="cr-atomone-step-icon" aria-hidden="true"><i class="fas fa-paper-plane"></i></div>
-                                            <div>
-                                                <p class="cr-atomone-step-title mb-1"><span>Step 5</span> Send to wallet above</p>
-                                                <p class="small mb-0">Withdraw ATONE to your own wallet, then send payment or donation to the wallet shown above.</p>
-                                            </div>
-                                        </article>
-                                        <article class="cr-atomone-step-card">
-                                            <div class="cr-atomone-step-icon" aria-hidden="true"><i class="fas fa-receipt"></i></div>
-                                            <div>
-                                                <p class="cr-atomone-step-title mb-1"><span>Step 6</span> Confirm order</p>
-                                                <p class="small mb-0">Paste your transaction hash below and confirm your order.</p>
-                                            </div>
-                                        </article>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="payment-panel-atom-one" class="d-none">
+                                    <div class="cr-atomone-emphasis border rounded p-3 mb-3">
+                                        <p class="cr-atomone-emphasis__title mb-1">ATOM ONE</p>
+                                        <p class="small mb-1"><strong>Atom one is available for crypto payments and donations.</strong></p>
+                                        <p class="small mb-0">If you choose Atom one, send payment in ATONE and submit your sender wallet and tx hash below.</p>
+                                    </div>
+                                    <div class="cr-atomone-wallet-card border rounded p-3 mb-3">
+                                        <p class="small text-uppercase fw-semibold mb-2">Atom one wallet for payments and donations</p>
+                                        <code id="atomone-wallet-address" class="cr-atomone-wallet-address">atone1r5dv24amcyvdxfcjjrw7m5ts324cavyu0fszgq</code>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm mt-3" id="copy-atomone-wallet">
+                                            <i class="fas fa-copy me-1" aria-hidden="true"></i>Copy wallet
+                                        </button>
+                                        <p id="atomone-copy-feedback" class="small text-muted mt-2 mb-0" aria-live="polite"></p>
+                                    </div>
+                                    <div class="cr-atomone-guide border rounded p-3 mb-3">
+                                        <h3 class="h6 mb-2">How to start with Atom one quickly</h3>
+                                        <div class="cr-atomone-wallet-links mb-3" aria-label="Recommended Atom one wallet extensions">
+                                            <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-link-chip">
+                                                <i class="fas fa-wallet" aria-hidden="true"></i> Keplr extension
+                                            </a>
+                                            <a href="https://www.leapwallet.io/download" target="_blank" rel="noopener noreferrer" class="cr-atomone-link-chip">
+                                                <i class="fas fa-feather-pointed" aria-hidden="true"></i> Leap extension
+                                            </a>
+                                        </div>
+                                        <p class="small mb-0">Install a wallet, send ATONE to the wallet above, then paste your tx hash to confirm the order.</p>
                                     </div>
                                     <p class="small text-muted mb-0">Order totals are shown in USD as a reference. Pay the equivalent amount in ATONE at your current market rate.</p>
-                                </div>
-                                <div class="row g-3 mb-3">
-                                    <div class="col-12">
-                                        <div class="cr-input-modern">
-                                            <label for="atomone-sender-wallet" class="cr-input-modern__label">Your sender wallet (`atone1...`) <span class="text-danger">*</span></label>
-                                            <input type="text" class="cr-input-modern__input" id="atomone-sender-wallet" name="atomone-sender-wallet" required placeholder="Paste your sender wallet">
+                                    <div class="row g-3 mt-1 mb-3">
+                                        <div class="col-12">
+                                            <div class="cr-input-modern">
+                                                <label for="atomone-sender-wallet" class="cr-input-modern__label">Your sender wallet (atone1...) <span class="text-danger">*</span></label>
+                                                <input type="text" class="cr-input-modern__input" id="atomone-sender-wallet" name="atomone-sender-wallet" placeholder="Paste your sender wallet">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="cr-input-modern">
+                                                <label for="atomone-tx-hash" class="cr-input-modern__label">Transaction hash (tx hash) <span class="text-danger">*</span></label>
+                                                <input type="text" class="cr-input-modern__input" id="atomone-tx-hash" name="atomone-tx-hash" minlength="20" placeholder="Paste tx hash from wallet or explorer">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-12">
-                                        <div class="cr-input-modern">
-                                            <label for="atomone-tx-hash" class="cr-input-modern__label">Transaction hash (tx hash) <span class="text-danger">*</span></label>
-                                            <input type="text" class="cr-input-modern__input" id="atomone-tx-hash" name="atomone-tx-hash" required minlength="20" placeholder="Paste tx hash from wallet or explorer">
-                                        </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="atomone-only-confirm">
+                                        <label class="form-check-label small" for="atomone-only-confirm">
+                                            I confirm I understand this order will be paid with Atom one (ATONE).
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="atomone-only-confirm" required>
-                                    <label class="form-check-label small" for="atomone-only-confirm">
-                                        I confirm I understand: this store accepts only AtomOne for payments and donations. PayPal, cards, and fiat are not accepted.
-                                    </label>
-                                </div>
-                                <button type="button" id="atomone-submit-order" class="btn btn-primary w-100 mb-3">I sent AtomOne — confirm order</button>
-                                <p class="small text-muted mb-0"><i class="fas fa-lock me-1"></i>We only collect the sender wallet and tx hash to verify on-chain payment.</p>
+
+                                <button type="button" id="checkout-submit-order" class="btn btn-primary w-100 mb-3">Place order</button>
+                                <p class="small text-muted mb-0" id="checkout-payment-note"><i class="fas fa-lock me-1"></i>We collect only the payment details needed to verify your order.</p>
                             </div>
                         </section>
                     </form>
@@ -287,9 +294,9 @@
                 <div class="cr-footer__social mb-4" aria-label="Social links">
                     <a href="https://web.facebook.com/joshuafroelich" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com/joshuafroelich/" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@cherifroelich2561" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="Spotify"><i class="fab fa-spotify"></i></a>
-                    <a href="https://music.apple.com" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="Apple Music"><i class="fab fa-apple"></i></a>
+                    <a href="https://www.youtube.com/channel/UCepBkCq38CtJiBGfgO_tq3g" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://open.spotify.com/album/4IKKSMJGSvT7149alJNv1h" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="Spotify"><i class="fab fa-spotify"></i></a>
+                    <a href="https://music.apple.com/es/artist/cyrus-reigns-records/1877222139?l=en-GB" target="_blank" rel="noopener noreferrer" class="cr-footer__social-link" aria-label="Apple Music"><i class="fab fa-apple"></i></a>
                 </div>
                 <div class="cr-footer__newsletter">
                     <p class="cr-footer__newsletter-title mb-2">Subscribe to our newsletter</p>

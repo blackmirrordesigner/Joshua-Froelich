@@ -104,7 +104,7 @@
       '<div id="cr-cart-drawer-body" class="cr-cart-drawer__body"></div>' +
       '<div class="cr-cart-drawer__footer">' +
       '<div class="cr-cart-drawer__subtotal d-flex justify-content-between mb-2"><span>Subtotal</span><span id="cr-cart-drawer-subtotal">$0.00</span></div>' +
-      '<a href="checkout.html" id="cr-cart-checkout-btn" class="btn btn-primary w-100">Checkout (AtomOne only)</a>' +
+      '<a href="checkout.html" id="cr-cart-checkout-btn" class="btn btn-primary w-100">Checkout</a>' +
       '</div>' +
       '</div>' +
       '</div>' +

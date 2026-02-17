@@ -78,6 +78,41 @@
         return false;
     }
 
+    function getPaymentMethod(order) {
+        return order && order.paymentMethod ? order.paymentMethod : 'Venmo';
+    }
+
+    function getPaymentDetails(order) {
+        var payment = order && order.payment ? order.payment : {};
+        var details = [];
+
+        if (payment.senderHandle) {
+            details.push({ label: 'Venmo username', value: payment.senderHandle, isCode: false });
+        }
+        if (payment.accountHolder) {
+            details.push({ label: 'Account holder', value: payment.accountHolder, isCode: false });
+        }
+        if (payment.reference) {
+            details.push({ label: 'Reference', value: payment.reference, isCode: false });
+        }
+        if (payment.senderWallet) {
+            details.push({ label: 'Sender wallet', value: payment.senderWallet, isCode: true });
+        }
+        if (payment.txHash) {
+            details.push({ label: 'Tx hash', value: payment.txHash, isCode: true });
+        }
+
+        return details;
+    }
+
+    function getPaymentDetailsHtml(order) {
+        return getPaymentDetails(order).map(function (detail) {
+            return '<p class="mb-1"><strong>' + detail.label + ':</strong> ' +
+                (detail.isCode ? '<code>' + escapeHtml(detail.value) + '</code>' : escapeHtml(detail.value)) +
+                '</p>';
+        }).join('');
+    }
+
     // Load dashboard statistics
     function loadDashboard() {
         var orders = getOrders();
@@ -146,7 +181,7 @@
                 '<div class="col-md-2">' +
                 '<span class="order-status ' + statusClass + '">' + escapeHtml(order.status || 'Pending') + '</span>' +
                 '<div class="small text-muted mt-1"><span class="badge badge-paid">' + escapeHtml(order.paymentStatus || 'Paid') + '</span></div>' +
-                '<div class="small text-muted mt-1">' + escapeHtml(order.paymentMethod || 'AtomOne') + '</div>' +
+                '<div class="small text-muted mt-1">' + escapeHtml(getPaymentMethod(order)) + '</div>' +
                 '</div>' +
                 '<div class="col-md-2 text-end">' +
                 '<button class="btn btn-sm btn-outline-primary" onclick="window.crAdmin.viewOrder(\'' + order.id + '\')">View</button>' +
@@ -163,9 +198,8 @@
         if (!order) return;
 
         currentOrder = order;
-        var paymentMethod = order.paymentMethod || 'AtomOne';
-        var paymentTxHash = order.payment && order.payment.txHash ? order.payment.txHash : '';
-        var paymentSenderWallet = order.payment && order.payment.senderWallet ? order.payment.senderWallet : '';
+        var paymentMethod = getPaymentMethod(order);
+        var paymentDetailsHtml = getPaymentDetailsHtml(order);
         var content = '<div class="order-detail">' +
             '<div class="row mb-4">' +
             '<div class="col-md-6">' +
@@ -190,8 +224,7 @@
             '</p>' +
             '<p class="mb-1"><strong>Payment method:</strong> ' + escapeHtml(paymentMethod) + '</p>' +
             '<p class="mb-1"><strong>Payment:</strong> <span class="badge badge-paid">' + escapeHtml(order.paymentStatus || 'Paid') + '</span></p>' +
-            (paymentSenderWallet ? '<p class="mb-1"><strong>Sender wallet:</strong> <code>' + escapeHtml(paymentSenderWallet) + '</code></p>' : '') +
-            (paymentTxHash ? '<p class="mb-1"><strong>Tx hash:</strong> <code>' + escapeHtml(paymentTxHash) + '</code></p>' : '') +
+            paymentDetailsHtml +
             '</div>' +
             '</div>' +
 
@@ -282,8 +315,8 @@
         var order = currentOrder;
         var printWindow = window.open('', '_blank');
         var date = new Date(order.createdAt);
-        var paymentMethod = order.paymentMethod || 'AtomOne';
-        var paymentTxHash = order.payment && order.payment.txHash ? order.payment.txHash : '';
+        var paymentMethod = getPaymentMethod(order);
+        var paymentDetails = getPaymentDetails(order);
 
         var invoiceHTML = '<!DOCTYPE html><html><head>' +
             '<title>Invoice - ' + order.id + '</title>' +
@@ -299,9 +332,11 @@
             '<div class="invoice-header"><div><h1>Invoice</h1><p>Cyrus Reigns Records</p></div>' +
             '<div style="text-align:right;"><p><strong>Invoice #:</strong> ' + order.id + '</p>' +
             '<p><strong>Date:</strong> ' + date.toLocaleDateString() + '</p>' +
-            '<p><strong>Status:</strong> ' + order.paymentStatus + '</p>' +
+            '<p><strong>Status:</strong> ' + (order.paymentStatus || 'Pending') + '</p>' +
             '<p><strong>Payment method:</strong> ' + paymentMethod + '</p>' +
-            (paymentTxHash ? '<p><strong>AtomOne tx hash:</strong> ' + paymentTxHash + '</p>' : '') +
+            paymentDetails.map(function (detail) {
+                return '<p><strong>' + detail.label + ':</strong> ' + escapeHtml(detail.value) + '</p>';
+            }).join('') +
             '</div></div>' +
 
             '<div style="margin-bottom:30px;"><h3>Bill To:</h3>' +
@@ -348,13 +383,16 @@
             return;
         }
 
-        var csv = 'Order ID,Date,Customer,Email,Address,City,State,ZIP,Country,Items,Quantity,Subtotal,Shipping,Tax,Total,Status,Payment Method,Payment Status,AtomOne Sender Wallet,AtomOne Tx Hash,Tracking,Carrier,Notes\n';
+        var csv = 'Order ID,Date,Customer,Email,Address,City,State,ZIP,Country,Items,Quantity,Subtotal,Shipping,Tax,Total,Status,Payment Method,Payment Status,Payment Detail 1 Label,Payment Detail 1 Value,Payment Detail 2 Label,Payment Detail 2 Value,Tracking,Carrier,Notes\n';
 
         orders.forEach(function (order) {
             var itemsSummary = order.items.map(function (item) {
                 return item.name + (item.size ? ' (' + item.size + ')' : '');
             }).join('; ');
             var totalQty = order.items.reduce(function (sum, item) { return sum + item.quantity; }, 0);
+            var paymentDetails = getPaymentDetails(order);
+            var paymentDetailOne = paymentDetails[0] || { label: '', value: '' };
+            var paymentDetailTwo = paymentDetails[1] || { label: '', value: '' };
 
             csv += '"' + order.id + '",' +
                 '"' + new Date(order.createdAt).toLocaleDateString() + '",' +
@@ -372,10 +410,12 @@
                 (order.tax || 0).toFixed(2) + ',' +
                 order.total.toFixed(2) + ',' +
                 '"' + order.status + '",' +
-                '"' + (order.paymentMethod || 'AtomOne') + '",' +
-                '"' + order.paymentStatus + '",' +
-                '"' + ((order.payment && order.payment.senderWallet) || '') + '",' +
-                '"' + ((order.payment && order.payment.txHash) || '') + '",' +
+                '"' + getPaymentMethod(order).replace(/"/g, '""') + '",' +
+                '"' + (order.paymentStatus || '').replace(/"/g, '""') + '",' +
+                '"' + (paymentDetailOne.label || '').replace(/"/g, '""') + '",' +
+                '"' + (paymentDetailOne.value || '').replace(/"/g, '""') + '",' +
+                '"' + (paymentDetailTwo.label || '').replace(/"/g, '""') + '",' +
+                '"' + (paymentDetailTwo.value || '').replace(/"/g, '""') + '",' +
                 '"' + (order.trackingNumber || '') + '",' +
                 '"' + (order.carrier || '') + '",' +
                 '"' + (order.notes || '').replace(/"/g, '""') + '"\n';

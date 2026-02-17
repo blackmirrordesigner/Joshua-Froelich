@@ -314,6 +314,16 @@ git push origin main
 - **Font Awesome** - Icons
 - **localStorage** - Client-side data persistence
 
+## Technology
+
+- HTML5
+- CSS3
+- Vanilla JavaScript (ES5)
+- Bootstrap 5
+- Font Awesome
+- localStorage
+- Web Crypto API
+
 ## 📄 License
 
 Copyright © 2024 Joshua Froelich / Cyrus Reigns Records. All rights reserved.
@@ -328,7 +338,7 @@ This is a personal artist website. For bug reports or feature suggestions, pleas
 
 - **Website**: [joshuafroelich.com](#)
 - **Email**: [contact@joshuafroelich.com](#)
-- **Social Media**: [Facebook](https://web.facebook.com/joshuafroelich), [Instagram](https://www.instagram.com/joshuafroelich/), [YouTube](https://www.youtube.com/@cherifroelich2561)
+- **Social Media**: [Facebook](https://web.facebook.com/joshuafroelich), [Instagram](https://www.instagram.com/joshuafroelich/), [YouTube](https://www.youtube.com/channel/UCepBkCq38CtJiBGfgO_tq3g)
 
 ## 🎵 About Cyrus Reigns
 

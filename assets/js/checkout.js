@@ -6,12 +6,19 @@
 
   var STORAGE_KEY_ORDERS = 'cr_orders';
   var TAX_RATES = {
-    'US': 0.00,  // Configurable in admin panel
+    'US': 0.00,
     'CA': 0.00,
     'OTHER': 0.00
   };
-  var ATOMONE_WALLET_ADDRESS = 'atone1p42my5f2fja8dx4lf9j9y7wpfnqfuxpuuhulk4';
+  var ATOMONE_WALLET_ADDRESS = 'atone1r5dv24amcyvdxfcjjrw7m5ts324cavyu0fszgq';
+  var VENMO_BUSINESS_HANDLE = '@cyrusreigns';
+  var VENMO_BUSINESS_URL = 'https://www.venmo.com/u/cyrusreigns';
   var MIN_TX_HASH_LENGTH = 20;
+  var PAYMENT_METHODS = {
+    venmo: 'Venmo',
+    bank_account: 'Bank Account',
+    atom_one: 'Atom one'
+  };
 
   function generateOrderId() {
     var timestamp = Date.now();
@@ -30,8 +37,8 @@
       orderData.id = generateOrderId();
       orderData.createdAt = new Date().toISOString();
       orderData.status = orderData.status || 'Pending';
-      orderData.paymentMethod = orderData.paymentMethod || 'AtomOne';
-      orderData.paymentStatus = orderData.paymentStatus || 'Awaiting AtomOne Confirmation';
+      orderData.paymentMethod = orderData.paymentMethod || 'Venmo';
+      orderData.paymentStatus = orderData.paymentStatus || 'Awaiting Venmo Confirmation';
       orderData.trackingNumber = '';
       orderData.carrier = '';
       orderData.notes = '';
@@ -90,6 +97,69 @@
     var div = document.createElement('div');
     div.textContent = s;
     return div.innerHTML;
+  }
+
+  function toggleElementVisibility(elementId, isVisible) {
+    var element = document.getElementById(elementId);
+    if (!element) return;
+    element.classList.toggle('d-none', !isVisible);
+  }
+
+  function getSelectedPaymentMethod() {
+    var methodSelect = document.getElementById('payment-method');
+    if (!methodSelect) return 'venmo';
+    return methodSelect.value || 'venmo';
+  }
+
+  function setPaymentFieldRequirements(method) {
+    var venmoHandle = document.getElementById('venmo-handle');
+    var bankAccountHolder = document.getElementById('bank-account-holder');
+    var bankTransferReference = document.getElementById('bank-transfer-reference');
+    var atomoneSenderWallet = document.getElementById('atomone-sender-wallet');
+    var atomoneTxHash = document.getElementById('atomone-tx-hash');
+    var atomoneConfirm = document.getElementById('atomone-only-confirm');
+
+    if (venmoHandle) venmoHandle.required = method === 'venmo';
+    if (bankAccountHolder) bankAccountHolder.required = method === 'bank_account';
+    if (bankTransferReference) bankTransferReference.required = method === 'bank_account';
+    if (atomoneSenderWallet) atomoneSenderWallet.required = method === 'atom_one';
+    if (atomoneTxHash) atomoneTxHash.required = method === 'atom_one';
+    if (atomoneConfirm) atomoneConfirm.required = method === 'atom_one';
+  }
+
+  function updatePaymentMethodUI() {
+    var method = getSelectedPaymentMethod();
+    var submitButton = document.getElementById('checkout-submit-order');
+    var paymentNote = document.getElementById('checkout-payment-note');
+
+    toggleElementVisibility('payment-panel-venmo', method === 'venmo');
+    toggleElementVisibility('payment-panel-bank-account', method === 'bank_account');
+    toggleElementVisibility('payment-panel-atom-one', method === 'atom_one');
+    setPaymentFieldRequirements(method);
+
+    if (!submitButton || !paymentNote) return;
+
+    if (method === 'venmo') {
+      submitButton.textContent = 'Place Venmo order';
+      paymentNote.innerHTML = '<i class="fas fa-lock me-1"></i>Pay to <a href="' + VENMO_BUSINESS_URL + '" target="_blank" rel="noopener noreferrer">' + VENMO_BUSINESS_HANDLE + '</a>. We store your Venmo username and optional reference with this order.';
+      return;
+    }
+
+    if (method === 'bank_account') {
+      submitButton.textContent = 'Place Bank Account order';
+      paymentNote.innerHTML = '<i class="fas fa-lock me-1"></i>We store your account holder name and transfer reference with this order.';
+      return;
+    }
+
+    submitButton.textContent = 'I sent Atom one - confirm order';
+    paymentNote.innerHTML = '<i class="fas fa-lock me-1"></i>We only collect the sender wallet and tx hash to verify on-chain payment.';
+  }
+
+  function initPaymentMethodSelector() {
+    var methodSelect = document.getElementById('payment-method');
+    if (!methodSelect) return;
+    methodSelect.addEventListener('change', updatePaymentMethodUI);
+    updatePaymentMethodUI();
   }
 
   var PRODUCTS = window.crCart && window.crCart.PRODUCTS ? window.crCart.PRODUCTS : { tee: { image: 'assets/images/merch/01-thirt_01.jpg' }, cd: { image: 'assets/images/merch/02-cd.jpg' }, 'ep-digital': { image: 'assets/releases/01-ep_cover.png' } };
@@ -205,13 +275,14 @@
     if (!feedback) return;
     feedback.textContent = message;
     feedback.classList.remove('text-success', 'text-danger');
+    if (!message) return;
     feedback.classList.add(isError ? 'text-danger' : 'text-success');
   }
 
   function copyAtomOneWallet() {
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       navigator.clipboard.writeText(ATOMONE_WALLET_ADDRESS).then(function () {
-        setCopyFeedback('Wallet copied. Send AtomOne only (ATONE).', false);
+        setCopyFeedback('Wallet copied. Send Atom one (ATONE).', false);
       }).catch(function () {
         setCopyFeedback('Copy failed. Please copy the wallet manually.', true);
       });
@@ -228,7 +299,7 @@
 
     try {
       document.execCommand('copy');
-      setCopyFeedback('Wallet copied. Send AtomOne only (ATONE).', false);
+      setCopyFeedback('Wallet copied. Send Atom one (ATONE).', false);
     } catch (e) {
       setCopyFeedback('Copy failed. Please copy the wallet manually.', true);
     }
@@ -236,7 +307,7 @@
     document.body.removeChild(temp);
   }
 
-  function initAtomOnePaymentActions() {
+  function initPaymentActions() {
     var copyButton = document.getElementById('copy-atomone-wallet');
     if (copyButton) {
       copyButton.addEventListener('click', copyAtomOneWallet);
@@ -250,7 +321,7 @@
       });
     }
 
-    var confirmButton = document.getElementById('atomone-submit-order');
+    var confirmButton = document.getElementById('checkout-submit-order');
     if (confirmButton) {
       confirmButton.addEventListener('click', processOrder);
     }
@@ -260,24 +331,89 @@
     var form = document.getElementById('checkout-form');
     if (!form) return;
 
-    // Basic validation
+    var paymentMethodKey = getSelectedPaymentMethod();
+    var paymentMethodLabel = PAYMENT_METHODS[paymentMethodKey] || PAYMENT_METHODS.venmo;
+    var paymentStatus = 'Pending Payment Confirmation';
+    var payment = {};
+    var paymentLineOne = '';
+    var paymentLineTwo = '';
+
+    if (paymentMethodKey === 'venmo') {
+      var venmoHandle = (document.getElementById('venmo-handle').value || '').trim();
+      var venmoReference = (document.getElementById('venmo-reference').value || '').trim();
+      if (!venmoHandle) {
+        alert('Please add your Venmo username.');
+        return;
+      }
+      paymentStatus = 'Awaiting Venmo Confirmation';
+      payment = {
+        provider: 'Venmo',
+        recipientHandle: VENMO_BUSINESS_HANDLE,
+        recipientUrl: VENMO_BUSINESS_URL,
+        senderHandle: venmoHandle,
+        reference: venmoReference
+      };
+      paymentLineOne = 'Venmo username: ' + venmoHandle;
+      paymentLineTwo = 'Pay to: ' + VENMO_BUSINESS_HANDLE;
+      if (venmoReference) paymentLineTwo += ' | Reference: ' + venmoReference;
+    }
+
+    if (paymentMethodKey === 'bank_account') {
+      var bankAccountHolder = (document.getElementById('bank-account-holder').value || '').trim();
+      var bankTransferReference = (document.getElementById('bank-transfer-reference').value || '').trim();
+      if (!bankAccountHolder) {
+        alert('Please add the account holder name for your bank transfer.');
+        return;
+      }
+      if (!bankTransferReference) {
+        alert('Please add your bank transfer reference.');
+        return;
+      }
+      paymentStatus = 'Awaiting Bank Transfer Confirmation';
+      payment = {
+        provider: 'Bank Account',
+        accountHolder: bankAccountHolder,
+        reference: bankTransferReference
+      };
+      paymentLineOne = 'Account holder: ' + bankAccountHolder;
+      paymentLineTwo = 'Transfer reference: ' + bankTransferReference;
+    }
+
+    if (paymentMethodKey === 'atom_one') {
+      var senderWallet = (document.getElementById('atomone-sender-wallet').value || '').trim();
+      var txHash = (document.getElementById('atomone-tx-hash').value || '').trim();
+      var atomoneConfirm = document.getElementById('atomone-only-confirm');
+      var atomoneConfirmed = atomoneConfirm ? atomoneConfirm.checked : false;
+
+      if (!senderWallet) {
+        alert('Please add your sender wallet address.');
+        return;
+      }
+      if (txHash.length < MIN_TX_HASH_LENGTH) {
+        alert('Please add a valid Atom one transaction hash.');
+        return;
+      }
+      if (!atomoneConfirmed) {
+        alert('Please confirm that this order will be paid with Atom one.');
+        return;
+      }
+
+      paymentStatus = 'Awaiting Atom one Confirmation';
+      payment = {
+        network: 'Atom one',
+        recipientWallet: ATOMONE_WALLET_ADDRESS,
+        senderWallet: senderWallet,
+        txHash: txHash
+      };
+      paymentLineOne = 'Sender wallet: ' + senderWallet;
+      paymentLineTwo = 'Tx hash: ' + txHash;
+    }
+
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    var senderWallet = (document.getElementById('atomone-sender-wallet').value || '').trim();
-    var txHash = (document.getElementById('atomone-tx-hash').value || '').trim();
-    if (!senderWallet) {
-      alert('Please add your sender wallet address.');
-      return;
-    }
-    if (txHash.length < MIN_TX_HASH_LENGTH) {
-      alert('Please add a valid AtomOne transaction hash.');
-      return;
-    }
-
-    // Gather form data
     var formData = {
       fullname: (document.getElementById('fullname').value || '').trim(),
       country: (document.getElementById('country').value || '').trim(),
@@ -288,7 +424,6 @@
       zip: (document.getElementById('zip').value || '').trim()
     };
 
-    // Get shipping method
     var selectedShipping = document.querySelector('input[name="shipping"]:checked');
     if (!selectedShipping) {
       alert('Please select a shipping method.');
@@ -297,10 +432,9 @@
     var shippingCost = parseFloat(selectedShipping.dataset.cost || 5.99);
     var shippingMethod = selectedShipping.value;
 
-    // Calculate totals
     var items = getCart();
     if (items.length === 0) {
-      alert('Your cart is empty. Add at least one item before confirming payment.');
+      alert('Your cart is empty. Add at least one item before placing your order.');
       return;
     }
     var subtotal = items.reduce(function (sum, item) {
@@ -309,7 +443,6 @@
     var tax = calculateTax(subtotal, formData.country);
     var total = subtotal + shippingCost + tax;
 
-    // Create order object
     var order = {
       customer: formData,
       items: items,
@@ -320,28 +453,25 @@
       },
       tax: tax,
       total: total,
-      paymentMethod: 'AtomOne',
-      paymentStatus: 'Awaiting AtomOne Confirmation',
-      payment: {
-        network: 'AtomOne',
-        recipientWallet: ATOMONE_WALLET_ADDRESS,
-        senderWallet: senderWallet,
-        txHash: txHash
-      }
+      paymentMethod: paymentMethodLabel,
+      paymentStatus: paymentStatus,
+      payment: payment
     };
 
-    // Save order
     var savedOrder = saveOrder(order);
-    
+
     if (savedOrder) {
-      // Clear cart
       setCart([]);
       if (window.crCartUpdate) window.crCartUpdate();
-      
-      // Show success message
-      alert('AtomOne order submitted successfully!\n\nOrder ID: ' + savedOrder.id + '\nNetwork: AtomOne\nSender wallet: ' + senderWallet + '\nTx hash: ' + txHash + '\n\nWe will verify your payment on-chain.');
-      
-      // Redirect to merch page
+
+      var successMessage = 'Order submitted successfully!\n\n' +
+        'Order ID: ' + savedOrder.id + '\n' +
+        'Payment method: ' + paymentMethodLabel;
+
+      if (paymentLineOne) successMessage += '\n' + paymentLineOne;
+      if (paymentLineTwo) successMessage += '\n' + paymentLineTwo;
+
+      alert(successMessage);
       window.location.href = 'merch.html';
     } else {
       alert('Failed to save order. Please try again.');
@@ -350,9 +480,11 @@
 
   var cart = getCart();
   if (cart.length === 0) {
-    // Don't redirect, just show empty state
+    // Keep checkout page visible and show empty state in summary.
   }
+
   renderOrderSummary();
   initShippingListeners();
-  initAtomOnePaymentActions();
+  initPaymentMethodSelector();
+  initPaymentActions();
 })();

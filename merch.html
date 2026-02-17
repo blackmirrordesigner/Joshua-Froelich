@@ -7,13 +7,38 @@
     <title>Merch | Cyrus Reigns Records</title>
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
     <meta name="description"
-        content="Cyrus Reigns Records merch — EP CD, T-shirts. Support the mission. Reigning over darkness.">
+        content="Cyrus Reigns Records merch — official secure store checkout powered by Fitprint.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Manrope:wght@500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .cr-merch-layout {
+            width: calc(100% - 80px);
+            max-width: none;
+            margin: 0 40px;
+        }
+
+        .cr-fitprint-wrap {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+
+        .cr-fitprint-card:hover,
+        .card.cr-fitprint-card:hover {
+            transform: none !important;
+        }
+
+        .cr-fitprint-iframe {
+            width: 1px;
+            min-width: 100%;
+            min-height: 960px;
+            border: 0;
+        }
+    </style>
 </head>
 
 <body class="cr-page-loading">
@@ -58,251 +83,26 @@
         </div>
     </nav>
     <main class="flex-grow-1 cr-pattern-dots">
-        <div class="container pb-5">
+        <div class="pb-5 cr-merch-layout">
             <div class="cr-page-heading-wrap text-center mb-5">
                 <h1 class="cr-section-title mb-2">Merch</h1>
-                <p class="lead text-muted mb-0">CDs, tees, and more. Support the mission.</p>
+                <p class="lead text-muted mb-0">Official store checkout powered by Fitprint.</p>
             </div>
-            <div class="row g-4 cr-animate-on-scroll justify-content-center">
-                <!-- EP CD -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 cr-border-gold cr-glow cr-merch-card">
-                        <img src="assets/images/merch/02-cd.jpg" class="card-img-top cr-merch-card__img"
-                            alt="Cyrus Reigns First EP CD" width="400" height="400">
-                        <div class="card-body">
-                            <h2 class="card-title h5">First EP — CD</h2>
-                            <p class="card-text small">Ezekiel 34, Isaiah 2, Jeremiah 23. Full sermon and Shakespearean
-                                rhymed versions.</p>
-                            <p class="mb-2"><strong class="cr-merch-price">$12.00</strong></p>
-                            <button type="button" class="btn btn-primary" data-cart-id="cd"
-                                data-cart-name="First EP — CD" data-cart-price="12">Add to cart</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- T-shirt with image gallery slider -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 cr-border-gold cr-glow cr-merch-card">
-                        <div class="cr-merch-gallery position-relative" data-cr-slider>
-                            <div class="cr-slider__viewport cr-merch-gallery__viewport">
-                                <div class="cr-slider__track">
-                                    <div class="cr-slider__slide" data-cr-slide>
-                                        <img src="assets/images/merch/01-thirt_01.jpg"
-                                            class="cr-merch-gallery__img card-img-top" alt="Cyrus Reigns T-shirt view 1"
-                                            width="400" height="400">
-                                    </div>
-                                    <div class="cr-slider__slide" data-cr-slide>
-                                        <img src="assets/images/merch/01-thirt_02.jpg"
-                                            class="cr-merch-gallery__img card-img-top" alt="Cyrus Reigns T-shirt view 2"
-                                            width="400" height="400">
-                                    </div>
-                                    <div class="cr-slider__slide" data-cr-slide>
-                                        <img src="assets/images/merch/01-thirt_03.jpg"
-                                            class="cr-merch-gallery__img card-img-top" alt="Cyrus Reigns T-shirt view 3"
-                                            width="400" height="400">
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button"
-                                class="cr-slider__btn cr-slider__btn--prev cr-merch-gallery__btn--prev"
-                                aria-label="Previous photo" data-cr-prev></button>
-                            <button type="button"
-                                class="cr-slider__btn cr-slider__btn--next cr-merch-gallery__btn--next"
-                                aria-label="Next photo" data-cr-next></button>
-                            <div class="cr-slider__dots cr-merch-gallery__dots" data-cr-dots role="tablist"
-                                aria-label="Photo navigation"></div>
-                        </div>
-                        <div class="card-body">
-                            <h2 class="card-title h5">Reigning Over Darkness — Tee</h2>
-                            <p class="card-text small">Christian Rock aesthetic. Swipe to see different angles.</p>
-                            <p class="mb-3"><strong class="cr-merch-price">$24.00</strong></p>
-                            <div class="cr-merch-tee-actions">
-                                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
-                                    <div class="cr-input-modern cr-input-modern--select cr-merch-tee-size-wrap">
-                                        <label for="cr-merch-tee-size" class="cr-input-modern__label">Size</label>
-                                        <select id="cr-merch-tee-size"
-                                            class="cr-input-modern__input cr-input-modern__select cr-merch-tee-size"
-                                            name="size" aria-label="T-shirt size">
-                                            <option value="S">Small (S) — Chest: 34-36"</option>
-                                            <option value="M" selected>Medium (M) — Chest: 38-40"</option>
-                                            <option value="L">Large (L) — Chest: 42-44"</option>
-                                            <option value="XL">X-Large (XL) — Chest: 46-48"</option>
-                                            <option value="XXL">XX-Large (XXL) — Chest: 50-52"</option>
-                                            <option value="3XL">3X-Large (3XL) — Chest: 54-56"</option>
-                                            <option value="4XL">4X-Large (4XL) — Chest: 58-60"</option>
-                                        </select>
-                                    </div>
-                                    <button type="button" class="btn btn-primary cr-merch-add-btn" data-cart-id="tee"
-                                        data-cart-name="Reigning Over Darkness — Tee" data-cart-price="24">Add to
-                                        cart</button>
-                                </div>
-                                <a href="#" class="cr-size-chart-link small" id="cr-size-chart-link"
-                                    data-bs-toggle="modal" data-bs-target="#cr-size-chart-modal"
-                                    aria-controls="cr-size-chart-modal">Size chart</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Coming soon -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 cr-border-gold cr-glow">
-                        <div
-                            class="card-img-top cr-merch-coming-placeholder d-flex align-items-center justify-content-center">
-                            <span class="text-muted">Coming Soon</span>
-                        </div>
-                        <div class="card-body">
-                            <h2 class="card-title h5">More Coming Soon</h2>
-                            <p class="card-text small">New designs and items. Stay tuned.</p>
-                            <span class="btn btn-outline-secondary disabled">Coming Soon</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <p class="mt-4 small text-muted text-center">Checkout and donations are accepted exclusively in AtomOne (ATONE). US shipping
-                available; international on request.</p>
-        </div>
-
-        <!-- Size chart modal -->
-        <div class="modal fade cr-size-chart-modal" id="cr-size-chart-modal" tabindex="-1"
-            aria-labelledby="cr-size-chart-title" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content cr-border-gold">
-                    <div class="modal-header border-secondary">
-                        <h2 class="modal-title h5" id="cr-size-chart-title">T-shirt size chart</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-muted small mb-3">Unisex fit. Choose your usual tee size or use the measurements
-                            below.</p>
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <h3 class="h6 mb-2">Measurements (inches)</h3>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered cr-size-chart-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Size</th>
-                                                <th>Chest (in)</th>
-                                                <th>Length (in)</th>
-                                                <th>Shoulder (in)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>S</td>
-                                                <td>34–36</td>
-                                                <td>27</td>
-                                                <td>16</td>
-                                            </tr>
-                                            <tr>
-                                                <td>M</td>
-                                                <td>38–40</td>
-                                                <td>28</td>
-                                                <td>17</td>
-                                            </tr>
-                                            <tr>
-                                                <td>L</td>
-                                                <td>42–44</td>
-                                                <td>29</td>
-                                                <td>18</td>
-                                            </tr>
-                                            <tr>
-                                                <td>XL</td>
-                                                <td>46–48</td>
-                                                <td>30</td>
-                                                <td>19</td>
-                                            </tr>
-                                            <tr>
-                                                <td>XXL</td>
-                                                <td>50–52</td>
-                                                <td>31</td>
-                                                <td>20</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3XL</td>
-                                                <td>54–56</td>
-                                                <td>32</td>
-                                                <td>21</td>
-                                            </tr>
-                                            <tr>
-                                                <td>4XL</td>
-                                                <td>58–60</td>
-                                                <td>33</td>
-                                                <td>22</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h3 class="h6 mb-2">Measurements (cm)</h3>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered cr-size-chart-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Size</th>
-                                                <th>Chest (cm)</th>
-                                                <th>Length (cm)</th>
-                                                <th>Shoulder (cm)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>S</td>
-                                                <td>86–91</td>
-                                                <td>69</td>
-                                                <td>41</td>
-                                            </tr>
-                                            <tr>
-                                                <td>M</td>
-                                                <td>97–102</td>
-                                                <td>71</td>
-                                                <td>43</td>
-                                            </tr>
-                                            <tr>
-                                                <td>L</td>
-                                                <td>107–112</td>
-                                                <td>74</td>
-                                                <td>46</td>
-                                            </tr>
-                                            <tr>
-                                                <td>XL</td>
-                                                <td>117–122</td>
-                                                <td>76</td>
-                                                <td>48</td>
-                                            </tr>
-                                            <tr>
-                                                <td>XXL</td>
-                                                <td>127–132</td>
-                                                <td>79</td>
-                                                <td>51</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3XL</td>
-                                                <td>137–142</td>
-                                                <td>81</td>
-                                                <td>53</td>
-                                            </tr>
-                                            <tr>
-                                                <td>4XL</td>
-                                                <td>147–152</td>
-                                                <td>84</td>
-                                                <td>56</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3 pt-3 border-top border-secondary">
-                            <h3 class="h6 mb-2">How to measure</h3>
-                            <ul class="small text-muted mb-2">
-                                <li><strong>Chest:</strong> Under arms, around the fullest part of chest.</li>
-                                <li><strong>Length:</strong> From highest point of shoulder to bottom hem.</li>
-                                <li><strong>Shoulder:</strong> From one shoulder seam to the other across the back.</li>
-                            </ul>
-                            <p class="small text-muted mb-0"><strong>Tip:</strong> If you’re between sizes, we recommend
-                                sizing up for a relaxed fit.</p>
-                        </div>
+            <div class="cr-fitprint-wrap cr-animate-on-scroll">
+                <div class="card cr-border-gold cr-fitprint-card">
+                    <div class="card-body">
+                        <p class="small text-muted mb-3">All orders, checkout, and payment processing run through our secure store below.</p>
+                        <a class="anchor" id="fitPrintAnchor" aria-hidden="true"></a>
+                        <iframe
+                            id="fitPrintIframe"
+                            class="cr-fitprint-iframe"
+                            title="Cyrus Reigns Records Official Store"
+                            scrolling="no"
+                            src="https://shop.fitprint.io/v2.html?shop=a8be165a-4ea9-4b33-83fc-d00dc441c917">
+                        </iframe>
+                        <noscript>
+                            <p class="small mt-3 mb-0">Please enable JavaScript to view the store.</p>
+                        </noscript>
                     </div>
                 </div>
             </div>
@@ -326,11 +126,11 @@
                         class="cr-footer__social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com/joshuafroelich/" target="_blank" rel="noopener noreferrer"
                         class="cr-footer__social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.youtube.com/@cherifroelich2561" target="_blank" rel="noopener noreferrer"
+                    <a href="https://www.youtube.com/channel/UCepBkCq38CtJiBGfgO_tq3g" target="_blank" rel="noopener noreferrer"
                         class="cr-footer__social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer"
+                    <a href="https://open.spotify.com/album/4IKKSMJGSvT7149alJNv1h" target="_blank" rel="noopener noreferrer"
                         class="cr-footer__social-link" aria-label="Spotify"><i class="fab fa-spotify"></i></a>
-                    <a href="https://music.apple.com" target="_blank" rel="noopener noreferrer"
+                    <a href="https://music.apple.com/es/artist/cyrus-reigns-records/1877222139?l=en-GB" target="_blank" rel="noopener noreferrer"
                         class="cr-footer__social-link" aria-label="Apple Music"><i class="fab fa-apple"></i></a>
                 </div>
                 <div class="cr-footer__newsletter mb-4">
@@ -371,10 +171,105 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/main.js"></script>
-    <script src="assets/js/cart.js"></script>
-    <script src="assets/js/slider.js"></script>
+    <script>
+        (function () {
+            'use strict';
+            var SCROLL_TOP_OFFSET = 96;
+            var enforceTopTimer = null;
+
+            function parseMessage(message) {
+                try {
+                    return JSON.parse(message);
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function getStoreTopPosition() {
+                var iframe = document.getElementById('fitPrintIframe');
+                if (!iframe) return 0;
+                var iframeTop = iframe.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0);
+                return Math.max(0, iframeTop - SCROLL_TOP_OFFSET);
+            }
+
+            function scrollToStoreTop() {
+                var targetTop = getStoreTopPosition();
+                window.scrollTo({ top: targetTop, behavior: 'smooth' });
+            }
+
+            function scrollToStoreTopImmediate() {
+                var targetTop = getStoreTopPosition();
+                window.scrollTo(0, targetTop);
+            }
+
+            function enforceStoreTopScroll() {
+                if (enforceTopTimer) {
+                    clearInterval(enforceTopTimer);
+                    enforceTopTimer = null;
+                }
+
+                scrollToStoreTop();
+                var ticks = 0;
+                enforceTopTimer = setInterval(function () {
+                    ticks += 1;
+                    scrollToStoreTopImmediate();
+                    if (ticks >= 12) {
+                        clearInterval(enforceTopTimer);
+                        enforceTopTimer = null;
+                    }
+                }, 45);
+            }
+
+            function handleRawIframeSizerMessage(event) {
+                if (typeof event.data !== 'string') return;
+                if (event.data.indexOf('[iFrameSizer]') !== 0) return;
+                if (event.data.indexOf('fitPrintIframe') === -1) return;
+
+                if (event.data.indexOf('action\\\\\\\":\\\\\\\"scrollTo\\\\\\\"') !== -1) {
+                    enforceStoreTopScroll();
+                }
+            }
+
+            function handleStoreMessage(messageData) {
+                var jsonData = parseMessage(messageData.message);
+                if (!jsonData || !jsonData.action) return;
+
+                if (jsonData.action === 'navigateTo' && jsonData.data) {
+                    window.onbeforeunload = null;
+                    window.location.href = jsonData.data;
+                    return;
+                }
+
+                if (jsonData.action === 'scrollTo') {
+                    setTimeout(function () {
+                        enforceStoreTopScroll();
+                    }, 80);
+                }
+            }
+
+            function initFitPrint() {
+                if (typeof iFrameResize !== 'function') return;
+
+                iFrameResize({
+                    log: false,
+                    checkOrigin: false,
+                    heightCalculationMethod: 'grow',
+                    autoResize: false,
+                    onMessage: handleStoreMessage,
+                    onScroll: function () {
+                        enforceStoreTopScroll();
+                        return false;
+                    }
+                }, '#fitPrintIframe');
+            }
+
+            window.addEventListener('message', handleRawIframeSizerMessage, true);
+            initFitPrint();
+        })();
+    </script>
 </body>
 
 </html>
