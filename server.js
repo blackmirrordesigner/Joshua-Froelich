@@ -11,7 +11,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const basicAuth = require('basic-auth');
+
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_USER = process.env.ADMIN_USER;
@@ -25,6 +25,19 @@ const CHAT_IDS = process.env.TELEGRAM_CHAT_IDS
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
 const rateLimitMap = new Map();
+
+function basicAuth(req) {
+  const header = req.headers.authorization || '';
+  const [type, token] = header.split(' ');
+  if (type !== 'Basic' || !token) return null;
+
+  const decoded = Buffer.from(token, 'base64').toString('utf8');
+  const idx = decoded.indexOf(':');
+  if (idx === -1) return null;
+
+  return { name: decoded.slice(0, idx), pass: decoded.slice(idx + 1) };
+}
+
 
 function getClientIp(req) {
   const forwarded = req.headers['x-forwarded-for'];
